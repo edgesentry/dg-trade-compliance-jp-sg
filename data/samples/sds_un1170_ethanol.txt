@@ -1,0 +1,22 @@
+"""
+SDS / Transport Information (synthetic fixture for Case 1)
+
+Product: Ethanol solution 70%
+Document language: English (+ Japanese labels)
+
+=== Section 14: Transport information / 輸送上の注意 ===
+
+UN number: UN 1170
+UN proper shipping name: ETHANOL SOLUTION
+Transport hazard class(es): 3
+Subsidiary risk: —
+Packing group: II
+Environmental hazards: Marine pollutant: No
+Special precautions: Keep away from heat and open flame.
+Flash point: 13 °C (closed cup)
+
+Transport in bulk: Not applicable.
+Packaging: Steel drum (UN 1A1), 160 L
+
+This material is classified as dangerous goods for maritime transport under IMDG Code.
+"""
