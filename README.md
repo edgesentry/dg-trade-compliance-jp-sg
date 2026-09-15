@@ -80,11 +80,20 @@ uv run dg-compliance map dist/gas.json --co-load dist/acid.json -o dist/mapped/
 uv run dg-compliance map dist/battery.json --watt-hour 120 -o dist/mapped/
 ```
 
-Offline Case 1–5 suite (no API key):
+Offline Case 1-5 suite (no API key):
 
 ```bash
 uv run pytest -v
 ```
+
+### CI (local parity)
+
+```bash
+./scripts/ci.sh
+# ruff check/format, mypy, bandit, pip-audit, pytest
+```
+
+GitHub Actions: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the same checks on push/PR to `main`.
 
 ---
 

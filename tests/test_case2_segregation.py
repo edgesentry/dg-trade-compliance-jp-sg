@@ -16,6 +16,4 @@ def test_case2_segregation_blocks_export():
     assert result.projections.cyberport is None
     blocks = [f for f in result.findings if f.severity == FindingSeverity.BLOCK]
     assert any(f.code == "SEGREGATION_CONFLICT" for f in blocks)
-    assert "3" in blocks[0].details.get("class_a", "") + blocks[0].details.get(
-        "class_b", ""
-    )
+    assert "3" in blocks[0].details.get("class_a", "") + blocks[0].details.get("class_b", "")

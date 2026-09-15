@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 from dg_compliance.models.extraction import EvidenceCitation, PackingGroup
 
 
-class FindingSeverity(str, Enum):
+class FindingSeverity(StrEnum):
     INFO = "info"
     WARNING = "warning"
     ERROR = "error"
@@ -24,13 +24,13 @@ class Finding(BaseModel):
     details: dict[str, Any] = Field(default_factory=dict)
 
 
-class PsaGroup(str, Enum):
+class PsaGroup(StrEnum):
     GROUP_1 = "1"  # Direct delivery / no yard dwell
     GROUP_2 = "2"  # Restricted storage
     GROUP_3 = "3"  # General storage
 
 
-class LithiumSection(str, Enum):
+class LithiumSection(StrEnum):
     IA = "IA"
     IB = "IB"
     II = "II"

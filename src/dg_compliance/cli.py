@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -16,6 +15,7 @@ from dg_compliance.extract.litellm_extractor import (
     LiteLLMExtractor,
     resolve_model,
 )
+from dg_compliance.models.canonical import OntologyResult
 from dg_compliance.models.extraction import ExtractionResult
 from dg_compliance.ontology.pipeline import run_ontology, write_ontology_outputs
 
@@ -29,14 +29,16 @@ console = Console()
 
 @app.command("extract")
 def extract_cmd(
-    input_path: Path = typer.Argument(..., exists=True, readable=True, help="SDS PDF / image / text"),
-    model: Optional[str] = typer.Option(
+    input_path: Path = typer.Argument(
+        ..., exists=True, readable=True, help="SDS PDF / image / text"
+    ),
+    model: str | None = typer.Option(
         None,
         "--model",
         "-m",
         help=f"LiteLLM model id (default: DG_EXTRACT_MODEL or {DEFAULT_MODEL})",
     ),
-    instruction: Optional[Path] = typer.Option(
+    instruction: Path | None = typer.Option(
         None,
         "--instruction",
         "-i",
@@ -44,19 +46,21 @@ def extract_cmd(
         readable=True,
         help="Optional shipping-instruction text file (chat/email)",
     ),
-    instruction_text: Optional[str] = typer.Option(
+    instruction_text: str | None = typer.Option(
         None,
         "--instruction-text",
         help="Optional shipping-instruction string",
     ),
-    output: Optional[Path] = typer.Option(
+    output: Path | None = typer.Option(
         None,
         "--output",
         "-o",
         help="Write ExtractionResult JSON here (default: stdout)",
     ),
     max_pages: int = typer.Option(8, "--max-pages", help="Max PDF pages to send to vision model"),
-    show_raw: bool = typer.Option(False, "--show-raw", help="Include raw model text in console summary"),
+    show_raw: bool = typer.Option(
+        False, "--show-raw", help="Include raw model text in console summary"
+    ),
 ) -> None:
     """Run Multimodal Extract (LiteLLM) on a SDS / shipping document."""
     instr = instruction_text
@@ -96,7 +100,7 @@ def map_cmd(
         readable=True,
         help="ExtractionResult JSON (from extract)",
     ),
-    co_load: Optional[list[Path]] = typer.Option(
+    co_load: list[Path] | None = typer.Option(
         None,
         "--co-load",
         exists=True,
@@ -109,15 +113,15 @@ def map_cmd(
         "-o",
         help="Directory for ontology_result.json and projection files",
     ),
-    container_id: Optional[str] = typer.Option(None, "--container-id"),
-    watt_hour: Optional[float] = typer.Option(
+    container_id: str | None = typer.Option(None, "--container-id"),
+    watt_hour: float | None = typer.Option(
         None,
         "--watt-hour",
         help="Watt-hour for first item (UN3480 Case 4); applies to primary input only",
     ),
 ) -> None:
     """Run Ontology Map (deterministic) on extract JSON → JP/SG drafts."""
-    paths = [input_path] + list(co_load or [])
+    paths = [input_path, *list(co_load or [])]
     extractions = [
         ExtractionResult.model_validate_json(p.read_text(encoding="utf-8")) for p in paths
     ]
@@ -125,9 +129,7 @@ def map_cmd(
     if watt_hour is not None:
         watt_hours = [watt_hour] + [None] * (len(extractions) - 1)
 
-    result = run_ontology(
-        extractions, container_id=container_id, watt_hours=watt_hours
-    )
+    result = run_ontology(extractions, container_id=container_id, watt_hours=watt_hours)
     written = write_ontology_outputs(result, output_dir)
 
     _print_ontology_summary(result)
@@ -147,7 +149,7 @@ def run_cmd(
         readable=True,
         help="ExtractionResult JSON (same as map)",
     ),
-    co_load: Optional[list[Path]] = typer.Option(
+    co_load: list[Path] | None = typer.Option(
         None,
         "--co-load",
         exists=True,
@@ -159,8 +161,8 @@ def run_cmd(
         "--output-dir",
         "-o",
     ),
-    container_id: Optional[str] = typer.Option(None, "--container-id"),
-    watt_hour: Optional[float] = typer.Option(None, "--watt-hour"),
+    container_id: str | None = typer.Option(None, "--container-id"),
+    watt_hour: float | None = typer.Option(None, "--watt-hour"),
 ) -> None:
     """Alias for `map` — Ontology Map only (extract separately)."""
     map_cmd(
@@ -202,7 +204,7 @@ CLI:
     )
 
 
-def _print_extract_summary(result) -> None:
+def _print_extract_summary(result: ExtractionResult) -> None:
     f = result.fields
     table = Table(title="Extracted DG fields", show_header=True, header_style="bold")
     table.add_column("Field")
@@ -213,14 +215,14 @@ def _print_extract_summary(result) -> None:
         ("Class", f.hazard_class),
         ("Subsidiary risk", f.subsidiary_risk),
         ("Packing group", None if f.packing_group is None else f.packing_group.value),
-        ("Flash point °C", f.flash_point_c),
+        ("Flash point C", f.flash_point_c),
         ("Marine pollutant", f.marine_pollutant),
         ("Packaging", f.packaging_type),
         ("Is DG", f.is_dangerous_goods),
         ("Language", f.language_detected),
     ]
     for k, v in rows:
-        table.add_row(k, "—" if v is None else str(v))
+        table.add_row(k, "-" if v is None else str(v))
     console.print(table)
 
     if result.evidence:
@@ -229,21 +231,24 @@ def _print_extract_summary(result) -> None:
         ev.add_column("Page")
         ev.add_column("Snippet")
         for e in result.evidence:
+            snippet = e.snippet
+            if len(snippet) > 120:
+                snippet = snippet[:120] + "..."
             ev.add_row(
                 e.field,
-                "—" if e.page_no is None else str(e.page_no),
-                (e.snippet[:120] + "…") if len(e.snippet) > 120 else e.snippet,
+                "-" if e.page_no is None else str(e.page_no),
+                snippet,
             )
         console.print(ev)
 
 
-def _print_ontology_summary(result) -> None:
+def _print_ontology_summary(result: OntologyResult) -> None:
     table = Table(title="Ontology Map", show_header=True, header_style="bold")
     table.add_column("Item")
     table.add_column("Value")
     table.add_row("export_blocked", str(result.export_blocked))
     table.add_row("skip_dg_forms", str(result.skip_dg_forms))
-    table.add_row("tags", ", ".join(result.tags) or "—")
+    table.add_row("tags", ", ".join(result.tags) or "-")
     console.print(table)
 
     items = Table(title="Canonical items", show_header=True, header_style="bold")
@@ -253,9 +258,9 @@ def _print_ontology_summary(result) -> None:
     items.add_column("DG")
     for it in result.shipment.items:
         items.add_row(
-            it.un_number or "—",
-            it.hazard_class or "—",
-            it.psa_group.value if it.psa_group else "—",
+            it.un_number or "-",
+            it.hazard_class or "-",
+            it.psa_group.value if it.psa_group else "-",
             str(it.is_dangerous_goods),
         )
     console.print(items)

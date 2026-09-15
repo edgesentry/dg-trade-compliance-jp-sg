@@ -18,6 +18,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
+    "ruff>=0.9.0",
+    "mypy>=1.14.0",
+    "bandit>=1.8.0",
+    "pip-audit>=2.8.0",
+    "types-Pillow>=10.0",
 ]
 
 [project.scripts]
@@ -37,3 +42,51 @@ packages = ["src/dg_compliance"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific
+]
+ignore = [
+    "E501",   # line length handled by formatter / pragmatic for prompts
+    "RUF001", # allow fullwidth punctuation in Japanese strings
+    "RUF002", # allow fullwidth punctuation in Japanese docstrings
+    "RUF003", # allow fullwidth punctuation in comments
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+"src/dg_compliance/cli.py" = ["B008"]  # Typer Argument/Option defaults are idiomatic
+"src/dg_compliance/models/extraction.py" = ["E741"]  # PackingGroup.I is IMDG terminology
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.13"
+mypy_path = "src"
+packages = ["dg_compliance"]
+strict = false
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+ignore_missing_imports = true
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]
+skips = ["B101"]
