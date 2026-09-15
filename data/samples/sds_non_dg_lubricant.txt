@@ -1,0 +1,17 @@
+"""
+SDS Section 14 — Synthetic Non-DG fixture (Case 5)
+
+Product: Industrial lubricant oil (general purpose)
+
+=== 14. Transport information / 輸送上の注意 ===
+
+UN number: Not applicable
+UN proper shipping name: Not regulated
+Transport hazard class(es): Not classified
+Packing group: Not applicable
+Marine pollutant: No
+Flash point: 210 °C
+
+This product is not classified as a dangerous good for transport by sea (IMDG),
+air (IATA), or road (ADR). Not Regulated / 非危険物.
+"""
