@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
 
-class PackingGroup(str, Enum):
+class PackingGroup(StrEnum):
     I = "I"
     II = "II"
     III = "III"
@@ -36,19 +36,13 @@ class ExtractedDgFields(BaseModel):
         default=None,
         description="UN number as UN#### (e.g. UN1170); null if not regulated / missing",
     )
-    proper_shipping_name: str | None = Field(
-        default=None, description="Proper Shipping Name (PSN)"
-    )
+    proper_shipping_name: str | None = Field(default=None, description="Proper Shipping Name (PSN)")
     hazard_class: str | None = Field(
         default=None, description="Primary IMDG class, e.g. '3' or '5.2'"
     )
-    subsidiary_risk: str | None = Field(
-        default=None, description="Subsidiary risk class if any"
-    )
+    subsidiary_risk: str | None = Field(default=None, description="Subsidiary risk class if any")
     packing_group: PackingGroup | None = Field(default=None)
-    flash_point_c: float | None = Field(
-        default=None, description="Flash point in Celsius"
-    )
+    flash_point_c: float | None = Field(default=None, description="Flash point in Celsius")
     marine_pollutant: bool | None = Field(default=None)
     packaging_type: str | None = Field(
         default=None,
@@ -58,9 +52,7 @@ class ExtractedDgFields(BaseModel):
         default=None,
         description="False when Section 14 / transport info says not regulated",
     )
-    language_detected: str | None = Field(
-        default=None, description="e.g. ja, en, ja+en"
-    )
+    language_detected: str | None = Field(default=None, description="e.g. ja, en, ja+en")
 
     @field_validator("un_number", mode="before")
     @classmethod

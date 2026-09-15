@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from functools import lru_cache
+from typing import Any
 
 from dg_compliance.models.canonical import (
     CanonicalImdgItem,
@@ -15,8 +16,9 @@ from dg_compliance.paths import psa_groups_path
 
 
 @lru_cache(maxsize=1)
-def _psa_table() -> dict:
-    return json.loads(psa_groups_path().read_text(encoding="utf-8"))
+def _psa_table() -> dict[str, Any]:
+    data: dict[str, Any] = json.loads(psa_groups_path().read_text(encoding="utf-8"))
+    return data
 
 
 def assign_psa_group(item: CanonicalImdgItem) -> list[Finding]:

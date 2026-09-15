@@ -61,9 +61,7 @@ def build_user_content(
             parts.append({"type": "image_url", "image_url": {"url": url}})
     elif suffix in IMAGE_SUFFIXES:
         parts.append({"type": "text", "text": "[Source page 1]"})
-        parts.append(
-            {"type": "image_url", "image_url": {"url": image_to_data_url(path)}}
-        )
+        parts.append({"type": "image_url", "image_url": {"url": image_to_data_url(path)}})
     elif suffix in TEXT_SUFFIXES or suffix == "":
         text = path.read_text(encoding="utf-8", errors="replace")
         parts.append(

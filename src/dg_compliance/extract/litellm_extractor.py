@@ -42,12 +42,7 @@ EXAMPLE_MODELS = (
 
 
 def resolve_model(explicit: str | None = None) -> str:
-    return (
-        explicit
-        or os.getenv("DG_EXTRACT_MODEL")
-        or os.getenv("LITELLM_MODEL")
-        or DEFAULT_MODEL
-    )
+    return explicit or os.getenv("DG_EXTRACT_MODEL") or os.getenv("LITELLM_MODEL") or DEFAULT_MODEL
 
 
 def provider_of(model: str) -> str | None:
@@ -55,7 +50,7 @@ def provider_of(model: str) -> str | None:
     if "/" not in model:
         return None
     prefix = model.split("/", 1)[0].lower()
-    return prefix if prefix in SUPPORTED_PROVIDERS else prefix
+    return prefix
 
 
 def _is_gemini3_plus(model: str) -> bool:
@@ -114,9 +109,7 @@ class LiteLLMExtractor(BaseExtractor):
         self.max_pages = max_pages
         self.max_tokens = max_tokens
 
-    def extract(
-        self, source: Path, *, instruction_text: str | None = None
-    ) -> ExtractionResult:
+    def extract(self, source: Path, *, instruction_text: str | None = None) -> ExtractionResult:
         source = source.resolve()
         if not source.is_file():
             raise FileNotFoundError(source)
@@ -149,9 +142,7 @@ class LiteLLMExtractor(BaseExtractor):
         if api_base:
             kwargs["api_base"] = api_base.rstrip("/")
             kwargs["api_key"] = (
-                os.getenv("LITELLM_MASTER_KEY")
-                or os.getenv("LITELLM_API_KEY")
-                or "sk-dg-local"
+                os.getenv("LITELLM_MASTER_KEY") or os.getenv("LITELLM_API_KEY") or "sk-dg-local"
             )
         try:
             response = completion(**kwargs)

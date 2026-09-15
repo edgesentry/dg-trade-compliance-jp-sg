@@ -18,9 +18,7 @@ def build_pan(shipment: Shipment) -> dict[str, Any]:
                 "properShippingName": item.proper_shipping_name,
                 "imoClass": item.hazard_class,
                 "psaDgGroup": item.psa_group.value if item.psa_group else None,
-                "lithiumSection": (
-                    item.lithium_section.value if item.lithium_section else None
-                ),
+                "lithiumSection": (item.lithium_section.value if item.lithium_section else None),
             }
         )
     return {
