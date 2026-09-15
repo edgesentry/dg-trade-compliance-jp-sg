@@ -1,0 +1,11 @@
+"""
+SDS / Transport Information (synthetic fixture for Case 2b)
+
+Product: Sulphuric acid
+=== Section 14 ===
+UN number: UN 1830
+UN proper shipping name: SULPHURIC ACID
+Transport hazard class(es): 8
+Packing group: II
+Marine pollutant: No
+"""

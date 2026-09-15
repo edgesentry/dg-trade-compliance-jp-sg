@@ -1,0 +1,44 @@
+{
+  "entries": [
+    {
+      "un_number": "UN1170",
+      "proper_shipping_name": "ETHANOL SOLUTION",
+      "hazard_class": "3",
+      "subsidiary_risk": null,
+      "packing_group": "II",
+      "marine_pollutant": false
+    },
+    {
+      "un_number": "UN1203",
+      "proper_shipping_name": "GASOLINE",
+      "hazard_class": "3",
+      "subsidiary_risk": null,
+      "packing_group": "II",
+      "marine_pollutant": false
+    },
+    {
+      "un_number": "UN1830",
+      "proper_shipping_name": "SULPHURIC ACID",
+      "hazard_class": "8",
+      "subsidiary_risk": null,
+      "packing_group": "II",
+      "marine_pollutant": false
+    },
+    {
+      "un_number": "UN3105",
+      "proper_shipping_name": "ORGANIC PEROXIDE TYPE D, LIQUID",
+      "hazard_class": "5.2",
+      "subsidiary_risk": null,
+      "packing_group": "NONE",
+      "marine_pollutant": false
+    },
+    {
+      "un_number": "UN3480",
+      "proper_shipping_name": "LITHIUM ION BATTERIES",
+      "hazard_class": "9",
+      "subsidiary_risk": null,
+      "packing_group": "NONE",
+      "marine_pollutant": false
+    }
+  ]
+}

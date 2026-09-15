@@ -6,7 +6,7 @@ Strategy source (commercial docs):
 `edgesentry-commercial/docs/strategy/dg-trade-compliance-jp-sg/`  
 (`mvp.md` · `prototype-plan.md`)
 
-This repo implements the runnable Neuro-Symbolic stack. **Currently shipped: Multimodal Extract (LiteLLM).**
+This repo implements the runnable Neuro-Symbolic stack: **Multimodal Extract (LiteLLM)** + **Ontology Map**.
 
 ---
 
@@ -15,7 +15,7 @@ This repo implements the runnable Neuro-Symbolic stack. **Currently shipped: Mul
 | Module | Status |
 |--------|--------|
 | **Multimodal Extract** (Vision/text → UN / PSN / Class / PG / FP + evidence) | **Implemented** (LiteLLM) |
-| Ontology Map (IMDG canonical → 白紙/赤紙/CyberPort/PSA) | Planned |
+| **Ontology Map** (IMDG canonical → 白紙/赤紙/CyberPort/PSA/PAN + segregation) | **Implemented** |
 | Responsible HITL | Planned |
 | Audit WORM (SHA-256 envelope interface) | Planned |
 
@@ -55,31 +55,40 @@ export LITELLM_MASTER_KEY=sk-dg-local
 uv run dg-compliance extract data/samples/sds_un1170_ethanol.txt
 ```
 
-### Run
+### Extract
 
 ```bash
-# Text SDS fixture (Case 1) — uses Gemini 3.8 Flash by default
 uv run dg-compliance extract data/samples/sds_un1170_ethanol.txt -o dist/extract_un1170.json
-
-# OpenAI / Anthropic
 uv run dg-compliance extract data/samples/sds_un1170_ethanol.txt -m openai/gpt-4o
-uv run dg-compliance extract data/samples/sds_un1170_ethanol.txt \
-  -m anthropic/claude-sonnet-4-20250514
-
-# PDF / scanned image (vision)
-uv run dg-compliance extract path/to/sds.pdf
-
-# Optional shipping chat/email context
-uv run dg-compliance extract data/samples/sds_un1170_ethanol.txt \
-  --instruction-text "門司出港 ONE便、ドラム20本、シンガポール向け"
 ```
+
+---
+
+## Ontology Map (deterministic)
+
+Maps `ExtractionResult` JSON → canonical IMDG → 白紙 / 赤紙 / CyberPort JSON / PSA Group / PAN.  
+Segregation conflicts set `export_blocked` and skip form files (exit code 2).
 
 ```bash
-uv run dg-compliance models   # provider / model help
-uv run pytest -v              # offline schema tests (no API key)
+# After extract
+uv run dg-compliance map dist/extract_un1170.json -o dist/mapped/
+
+# Co-load (Case 2 segregation)
+uv run dg-compliance map dist/gas.json --co-load dist/acid.json -o dist/mapped/
+
+# Lithium Wh override (Case 4)
+uv run dg-compliance map dist/battery.json --watt-hour 120 -o dist/mapped/
 ```
 
-### Env
+Offline Case 1–5 suite (no API key):
+
+```bash
+uv run pytest -v
+```
+
+---
+
+## Env
 
 | Variable | Purpose |
 |----------|---------|
@@ -87,27 +96,29 @@ uv run pytest -v              # offline schema tests (no API key)
 | `GEMINI_API_KEY` | Google AI Studio (Gemini) |
 | `OPENAI_API_KEY` | OpenAI |
 | `ANTHROPIC_API_KEY` | Anthropic |
-
-### Output shape
-
-`ExtractionResult` JSON: `fields` (UN, PSN, class, PG, flash point, marine pollutant, packaging, is_dg) + `evidence[]` (`field`, `page_no`, `snippet`) for HITL highlight later.
+| `LITELLM_API_BASE` | Optional local proxy base |
 
 ---
 
 ## Layout
 
 ```text
-scripts/start_litellm.sh   # LiteLLM proxy launcher
-litellm_config.yaml        # Gemini / OpenAI / Anthropic model list
+scripts/start_litellm.sh
+litellm_config.yaml
 src/dg_compliance/
   cli.py
   models/extraction.py
-  extract/
-    litellm_extractor.py   # LiteLLM completion (direct or via proxy)
-    pdf_pages.py           # PDF/image → data-URL pages
-    prompts.py
-data/samples/              # synthetic SDS text fixtures
-tests/                     # offline unit tests
+  models/canonical.py
+  extract/                 # Multimodal Extract
+  ontology/                # map + pipeline
+  validate/                # IMDG / segregation / PSA / lithium
+  projections/             # hakushi / akagami / cyberport / pan
+data/
+  imdg_dgl_sample.json
+  psa_dg_groups.json
+  segregation_pairs.json
+  samples/
+tests/                     # schema + Case 1–5
 ```
 
 See [MVP_IMPLEMENTATION_PLAN.md](MVP_IMPLEMENTATION_PLAN.md) for the full roadmap.

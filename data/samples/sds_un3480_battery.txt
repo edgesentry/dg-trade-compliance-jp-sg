@@ -1,0 +1,12 @@
+"""
+SDS / Transport Information (synthetic fixture for Case 4)
+
+Product: Lithium ion batteries
+=== Section 14 ===
+UN number: UN 3480
+UN proper shipping name: LITHIUM ION BATTERIES
+Transport hazard class(es): 9
+Packing group: Not applicable
+Watt-hour rating: 120 Wh (per cell/battery > 100 Wh)
+Marine pollutant: No
+"""
