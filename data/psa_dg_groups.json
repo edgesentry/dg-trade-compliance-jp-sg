@@ -1,0 +1,25 @@
+{
+  "by_un": {
+    "UN1170": {
+      "group": "3",
+      "note": "Flammable liquid — general storage (sample)"
+    },
+    "UN1203": {
+      "group": "3",
+      "note": "Gasoline — general storage (sample)"
+    },
+    "UN1830": {
+      "group": "2",
+      "note": "Corrosive — restricted storage (sample)"
+    },
+    "UN3105": {
+      "group": "1",
+      "note": "Organic peroxide Type D — Direct Delivery only"
+    },
+    "UN3480": {
+      "group": "2",
+      "note": "Li-ion batteries — PSA 2026 battery uplift to Group 2 (sample)"
+    }
+  },
+  "default_group": "3"
+}

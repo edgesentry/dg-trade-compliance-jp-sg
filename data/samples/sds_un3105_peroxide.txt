@@ -1,0 +1,12 @@
+"""
+SDS / Transport Information (synthetic fixture for Case 3)
+
+Product: Organic peroxide Type D, liquid
+=== Section 14 ===
+UN number: UN 3105
+UN proper shipping name: ORGANIC PEROXIDE TYPE D, LIQUID
+Transport hazard class(es): 5.2
+Packing group: Not applicable
+Marine pollutant: No
+Temperature control: Not required
+"""

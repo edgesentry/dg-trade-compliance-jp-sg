@@ -22,35 +22,40 @@
 
 | Step | Scope | Status |
 |------|--------|--------|
-| **Theme ①** | Multimodal Extract via **LiteLLM** (Gemini / OpenAI / Anthropic), evidence page+snippet | **Done** |
-| Theme ② | Ontology Map + projections | Next |
-| Theme ③ | HITL preview + export-only | Later |
-| Demo suite | Case 1–5 | After Ontology Map |
+| **Theme 1** | Multimodal Extract via **LiteLLM** (Gemini / OpenAI / Anthropic), evidence page+snippet | **Done** |
+| **Theme 2** | Ontology Map + projections + Case 1–5 offline tests | **Done** |
+| Theme 3 | HITL preview + export-only | Later |
+| Demo suite | Live extract → map demo polish | Next |
 
 **Default extract model:** `gemini/gemini-3.8-flash`
 
 ---
 
-## Theme ① — current design
+## Theme 1 — Extract
 
 - Entry: `uv run dg-compliance extract <sds.pdf|txt|image>`
-- Transport: `litellm.completion` with `DG_EXTRACT_MODEL` / `--model`
-- Providers: `gemini/*` · `openai/*` · `anthropic/*`
-- PDF pages rendered with `pypdfium2` → PNG data-URLs for vision models
-- Schema: `ExtractionResult` / `ExtractedDgFields` / `EvidenceCitation` in `models/extraction.py`
-- Package path: `src/dg_compliance/extract/`
-
-Extract **must not** emit PSA Group or segregation verdicts.
+- Package: `src/dg_compliance/extract/`
+- Extract **must not** emit PSA Group or segregation verdicts.
 
 ---
 
-## Next (Theme ② sketch)
+## Theme 2 — Ontology Map
 
 ```text
 ExtractionResult
-    → CanonicalImdgItem
-    → hakushi / akagami / cyberport JSON / psa_group + PAN
-    → segregation check on co-load
+    → CanonicalImdgItem          (ontology/map.py)
+    → DGL enrich + PSA + lithium + segregation  (validate/)
+    → hakushi / akagami / cyberport / pan       (projections/)
 ```
 
-Benchmark cases remain those in `prototype-plan.md` §3 (UN1170, segregation, PSA G1, LiB, non-DG).
+- Entry: `uv run dg-compliance map <extract.json> [--co-load ...] -o dist/mapped/`
+- Sample tables: `data/imdg_dgl_sample.json`, `data/psa_dg_groups.json`, `data/segregation_pairs.json`
+- Case 1–5 covered by `tests/test_case*.py` (no LLM)
+
+| Case | Expectation |
+|------|-------------|
+| 1 UN1170 | Forms generated, PSA Group 3 |
+| 2 UN1203+UN1830 | `SEGREGATION_CONFLICT`, export blocked |
+| 3 UN3105 | Forms generated, PSA Group 1 warning |
+| 4 UN3480 | Section IB, Hazcheck + Loss Prevention tags, PSA Group 2 |
+| 5 Non-DG | Forms skipped |

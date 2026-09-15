@@ -1,0 +1,12 @@
+"""
+SDS / Transport Information (synthetic fixture for Case 2a)
+
+Product: Gasoline
+=== Section 14 ===
+UN number: UN 1203
+UN proper shipping name: GASOLINE
+Transport hazard class(es): 3
+Packing group: II
+Flash point: -40 °C
+Marine pollutant: No
+"""

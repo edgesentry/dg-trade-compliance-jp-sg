@@ -1,0 +1,22 @@
+{
+  "forbidden_class_pairs": [
+    {
+      "a": "3",
+      "b": "8",
+      "code": "SEGREGATION_CONFLICT",
+      "message": "Class 3 and Class 8 incompatible in single container (IMDG 7.2.4 sample rule)"
+    },
+    {
+      "a": "5.2",
+      "b": "3",
+      "code": "SEGREGATION_CONFLICT",
+      "message": "Class 5.2 and Class 3 incompatible in single container (IMDG 7.2.4 sample rule)"
+    },
+    {
+      "a": "5.2",
+      "b": "8",
+      "code": "SEGREGATION_CONFLICT",
+      "message": "Class 5.2 and Class 8 incompatible in single container (IMDG 7.2.4 sample rule)"
+    }
+  ]
+}
